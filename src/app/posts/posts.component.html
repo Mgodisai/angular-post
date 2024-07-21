@@ -1,0 +1,12 @@
+<div>
+  @if(getPosts().length>0) { @for(post of getPosts(); track post.id) {
+  <div class="post-header">
+    <h2 [routerLink]="['/posts', post.id]">
+      {{ post.title | truncate : 50 }}
+    </h2>
+    <button (click)="deletePost(post.id)">Delete</button>
+  </div>
+  } } @else {
+  <H2>No posts found</H2>
+  }
+</div>
