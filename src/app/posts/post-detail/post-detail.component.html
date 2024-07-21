@@ -1,5 +1,5 @@
 <div class="post-detail">
-  @if(post) {
+  @if(post(); as post) {
   <p><strong>Id:</strong> {{ post.id }}</p>
   <p><strong>UserId:</strong> {{ post.userId }}</p>
   <p><strong>Title:</strong> {{ post.title }}</p>

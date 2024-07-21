@@ -1,4 +1,4 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component, DestroyRef, signal } from '@angular/core';
 import { PostsService } from './posts.service';
 import { map, tap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -10,30 +10,25 @@ import { Post } from './post.model';
   styleUrl: './posts.component.scss',
 })
 export class PostsComponent {
-  private posts: Post[] = [];
+  posts = signal<Post[]>([]);
+
   constructor(
     private readonly postsService: PostsService,
     private readonly destroyRef: DestroyRef
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     this.postsService
-      .getPosts()
+      .getTopPosts()
       .pipe(
-        map((posts) => posts.slice(0, 10)),
-        tap((posts) => (this.posts = posts)),
+        tap((posts) => this.posts.set(posts)),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
   }
 
-  getPosts() {
-    return this.posts;
-  }
+  ngOnInit(): void {}
 
   deletePost(id: number): void {
-    this.postsService.deletePost(id).subscribe(() => {
-      this.posts = this.posts.filter((post) => post.id !== id);
-    });
+    this.postsService.deletePost(id).subscribe();
+    this.posts.update((posts) => posts.filter((post) => post.id !== id));
   }
 }

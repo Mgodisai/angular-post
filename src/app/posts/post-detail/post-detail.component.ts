@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, signal } from '@angular/core';
 import { Post } from '../post.model';
 import { PostsService } from '../posts.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-post-detail',
@@ -9,22 +10,14 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './post-detail.component.scss',
 })
 export class PostDetailComponent {
-  post?: Post;
+  id = Number(this.route.snapshot.paramMap.get('id'));
+  post = toSignal(this.postsService.getPost(this.id));
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly postsService: PostsService,
     private readonly router: Router
   ) {}
-
-  ngOnInit(): void {
-    this.getPost();
-  }
-
-  getPost(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.postsService.getPost(id).subscribe((post) => (this.post = post));
-  }
 
   goBack(): void {
     this.router.navigate(['/posts']);

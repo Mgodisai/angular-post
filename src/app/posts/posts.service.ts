@@ -11,8 +11,10 @@ export class PostsService {
 
   constructor(private readonly http: HttpClient) {}
 
-  getPosts(): Observable<Post[]> {
-    return this.http.get<Post[]>(this.baseUrl);
+  getTopPosts(numberOfTopRecords: number = 10): Observable<Post[]> {
+    return this.http.get<Post[]>(
+      `${this.baseUrl}?_limit=${numberOfTopRecords}`
+    );
   }
 
   getPost(id: number): Observable<Post> {
